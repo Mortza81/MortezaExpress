@@ -1,6 +1,7 @@
 import { Query } from "./types";
 export default function extractQueryParams(path: string): Query {
-  const parsedUrl = new URL(path);
+  const url = `https://fakedomain.com${path}`;
+  const parsedUrl = new URL(url);
   const queryParams = parsedUrl.searchParams;
   const query: Query = {};
 
@@ -13,9 +14,3 @@ export default function extractQueryParams(path: string): Query {
   });
   return query;
 }
-
-console.log(
-  extractQueryParams(
-    "https://example.com/path/to/resource?param1=value1,value2&param2=value2&param1=value3"
-  )
-);
