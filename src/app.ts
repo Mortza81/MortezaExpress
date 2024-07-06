@@ -2,49 +2,49 @@ import { Middleware, Route } from "./types";
 import http from "http";
 import queryExtractor from "./queryExtractor";
 import path from 'path'
-import { readFile } from "fs/promises"; 
+import { readFile } from "fs/promises";
 import { Response } from "./Response";
 import { Request } from "./Request";
 
 export const statics = function (root: string) {
-    return async (req: Request, res: Response, next: Function) => {
-      const filePath = path.join(root, req.url || "/");
-      try {
-        const data = await readFile(filePath);
-        res.writeHead(200, { "Content-Type": getContentType(filePath) });
-        // res.write(data)
-        res.end(data);
-      }
-    catch(err) {
-        next();
-      }
-    };
-  };
-  const getContentType = (filePath: string): string => {
-    const ext = filePath.split(".").pop();
-    switch (ext) {
-      case "html":
-        return "text/html";
-      case "css":
-        return "text/css";
-      case "js":
-        return "application/javascript";
-      case "json":
-        return "application/json";
-      case "png":
-        return "image/png";
-      case "jpg":
-        return "image/jpeg";
-      case "gif":
-        return "image/gif";
-      default:
-        return "application/octet-stream";
+  return async (req: Request, res: Response, next: Function) => {
+    const filePath = path.join(root, req.url || "/");
+    try {
+      const data = await readFile(filePath);
+      res.writeHead(200, { "Content-Type": getContentType(filePath) });
+      res.end(data);
+    }
+    catch (err) {
+      next();
     }
   };
+};
+const getContentType = (filePath: string): string => {
+  const ext = filePath.split(".").pop();
+  switch (ext) {
+    case "html":
+      return "text/html";
+    case "css":
+      return "text/css";
+    case "js":
+      return "application/javascript";
+    case "json":
+      return "application/json";
+    case "png":
+      return "image/png";
+    case "jpg":
+      return "image/jpeg";
+    case "gif":
+      return "image/gif";
+    default:
+      return "application/octet-stream";
+  }
+};
 class MortezaExpress {
+  private handlers: Middleware[] = []
   private middlewares: Middleware[] = [];
   private routes: Route[] = [];
-  constructor() {}
+  constructor() { }
   use(...middlewares: Middleware[]) {
     this.middlewares = this.middlewares.concat(middlewares);
   }
@@ -54,6 +54,7 @@ class MortezaExpress {
       path: path,
       handler,
     });
+    this.middlewares.push(handler)
   }
   post(path: string, handler: Middleware) {
     this.routes.push({
@@ -61,6 +62,7 @@ class MortezaExpress {
       path: path,
       handler,
     });
+    this.middlewares.push(handler)
   }
   put(path: string, handler: Middleware) {
     this.routes.push({
@@ -68,6 +70,7 @@ class MortezaExpress {
       path: path,
       handler,
     });
+    this.middlewares.push(handler)
   }
   delete(path: string, handler: Middleware) {
     this.routes.push({
@@ -75,6 +78,7 @@ class MortezaExpress {
       path: path,
       handler,
     });
+    this.middlewares.push(handler)
   }
   listen(port: number, callback: () => void) {
     const server = http.createServer((req, res) => {
@@ -83,25 +87,40 @@ class MortezaExpress {
       const response = new Response(res);
       const method = req.method || "GET";
       let index = 0;
+      const route = this.routes.find((route) => route.path === url && route.method === method);
+      const handler = route?.handler;
+
       const next = () => {
         if (index < this.middlewares.length) {
           const middleware = this.middlewares[index];
           index++;
-          middleware(request, response, next);
+
+          // Check if middleware is a route handler
+          if (this.routes.some(route => route.handler === middleware)) {
+            // If it is the route handler for the current request, execute it
+            if (middleware === handler) {
+              middleware(request, response, () => { });
+            } else {
+              // Otherwise, skip to the next middleware
+              next();
+            }
+          } else {
+            // If middleware is a general middleware, execute it
+            middleware(request, response, next);
+          }
         } else {
-          var route = this.routes.find((route) => {
-            return route.path === url && route.method === method;
-          });
           if (route) {
-            route.handler(request, response, () => {});
+            route.handler(request, response, () => { });
           } else {
             res.statusCode = 404;
             res.end("Not Found");
           }
         }
       };
+
       next();
     });
+
     server.listen(port, callback);
   }
 }
