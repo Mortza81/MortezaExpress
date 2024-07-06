@@ -1,12 +1,50 @@
 import { Middleware, Route } from "./types";
 import http from "http";
 import queryExtractor from "./queryExtractor";
+import path from 'path'
+import { readFile } from "fs/promises"; 
 import { Response } from "./Response";
 import { Request } from "./Request";
+
+export const statics = function (root: string) {
+    return async (req: Request, res: Response, next: Function) => {
+      const filePath = path.join(root, req.url || "/");
+      try {
+        const data = await readFile(filePath);
+        res.writeHead(200, { "Content-Type": getContentType(filePath) });
+        // res.write(data)
+        res.end(data);
+      }
+    catch(err) {
+        next();
+      }
+    };
+  };
+  const getContentType = (filePath: string): string => {
+    const ext = filePath.split(".").pop();
+    switch (ext) {
+      case "html":
+        return "text/html";
+      case "css":
+        return "text/css";
+      case "js":
+        return "application/javascript";
+      case "json":
+        return "application/json";
+      case "png":
+        return "image/png";
+      case "jpg":
+        return "image/jpeg";
+      case "gif":
+        return "image/gif";
+      default:
+        return "application/octet-stream";
+    }
+  };
 class MortezaExpress {
   private middlewares: Middleware[] = [];
   private routes: Route[] = [];
-  constructor() { }
+  constructor() {}
   use(...middlewares: Middleware[]) {
     this.middlewares = this.middlewares.concat(middlewares);
   }
@@ -40,35 +78,34 @@ class MortezaExpress {
   }
   listen(port: number, callback: () => void) {
     const server = http.createServer((req, res) => {
-      const request = new Request(req, queryExtractor(req.url!));
+      const url = req.url?.split("?")[0] || "/";
+      const request = new Request(req, queryExtractor(req.url!), url);
       const response = new Response(res);
       const method = req.method || "GET";
-      const url = req.url?.split("?")[0];
       let index = 0;
       const next = () => {
         if (index < this.middlewares.length) {
           const middleware = this.middlewares[index];
           index++;
-          middleware(request, response, next)
+          middleware(request, response, next);
         } else {
           var route = this.routes.find((route) => {
             return route.path === url && route.method === method;
           });
           if (route) {
-            route.handler(request, response, () => { })
-          }
-          else {
-            res.statusCode = 404
-            res.end('Not Found')
+            route.handler(request, response, () => {});
+          } else {
+            res.statusCode = 404;
+            res.end("Not Found");
           }
         }
-
       };
-      next()
+      next();
     });
     server.listen(port, callback);
   }
 }
+
 export default function run() {
-  return new MortezaExpress()
+  return new MortezaExpress();
 }

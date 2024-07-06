@@ -4,10 +4,10 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx ts-node-dev --respawn src/index.ts"
+    "start": "npx ts-node-dev --respawn src/test.ts"
   },
   "keywords": [],
-  "author": "",
+  "author": "Mortreza",
   "license": "ISC",
   "description": "",
   "dependencies": {
