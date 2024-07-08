@@ -1,11 +1,10 @@
 import { Middleware, Route } from "./types";
-import http from "http";
-import queryExtractor from "./queryExtractor";
 import path from 'path'
 import { readFile } from "fs/promises";
 import { Response } from "./Response";
 import { Request } from "./Request";
-
+import handler from './handler'
+import http from 'http'
 export function statics(root: string) {
   return async (req: Request, res: Response, next: Function) => {
     const filePath = path.join(root, req.url || "/");
@@ -82,41 +81,8 @@ class MortezaExpress {
   }
   listen(port: number, callback: () => void) {
     const server = http.createServer((req, res) => {
-      const url = req.url?.split("?")[0] || "/";
-      const request = new Request(req, queryExtractor(req.url!), url);
-      const response = new Response(res);
-      const method = req.method || "GET";
-      let index = 0;
-      const route = this.routes.find((route) => route.path === url && route.method === method);
-      const handler = route?.handler;
-
-      const next = () => {
-        if (index < this.middlewares.length) {
-          const middleware = this.middlewares[index];
-          index++;
-
-          if (this.routes.some(route => route.handler === middleware)) {
-            if (middleware === handler) {
-              middleware(request, response, () => { });
-            } else {
-              next();
-            }
-          } else {
-            middleware(request, response, next);
-          }
-        } else {
-          if (route) {
-            route.handler(request, response, () => { });
-          } else {
-            res.statusCode = 404;
-            res.end("Not Found");
-          }
-        }
-      };
-
-      next();
+      handler(req,res,this.routes,this.middlewares)
     });
-
     server.listen(port, callback);
   }
 }

@@ -1,6 +1,6 @@
 {
   "name": "mortezaexpress",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "It's a simple express writen by Mortreza",
   "main": "lib/index.js",
   "author": "Moretza",
@@ -8,7 +8,7 @@
     "build": "npx tsc"
   },
   "files": [
-    "dist/**/*"
+    "lib/**/*"
   ],
   "devDependencies": {
     "@types/node": "^20.14.10",
