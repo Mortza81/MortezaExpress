@@ -1,25 +1,20 @@
 {
   "name": "mortezaexpress",
-  "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "npx ts-node-dev --respawn src/test.ts"
-  },
-  "keywords": [],
-  "author": "Mortreza",
-  "license": "ISC",
+  "version": "1.0.6",
   "description": "It's a simple express writen by Mortreza",
-  "dependencies": {
-    "typescript": "^5.5.3"
+  "main": "lib/index.js",
+  "author": "Moretza",
+  "scripts": {
+    "build": "npx tsc"
   },
+  "files": [
+    "dist/**/*"
+  ],
   "devDependencies": {
-    "ts-node-dev": "^2.0.0"
+    "@types/node": "^20.14.10",
+    "typescript": "^4.0.0"
   },
-
-    "files": [
-      "dist/**/*"
-    ]
-
+  "dependencies": {
+    "serve-static": "^1.15.0"
+  }
 }

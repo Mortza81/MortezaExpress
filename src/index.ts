@@ -6,7 +6,7 @@ import { readFile } from "fs/promises";
 import { Response } from "./Response";
 import { Request } from "./Request";
 
-export const statics = function (root: string) {
+export function statics(root: string) {
   return async (req: Request, res: Response, next: Function) => {
     const filePath = path.join(root, req.url || "/");
     try {
@@ -95,17 +95,13 @@ class MortezaExpress {
           const middleware = this.middlewares[index];
           index++;
 
-          // Check if middleware is a route handler
           if (this.routes.some(route => route.handler === middleware)) {
-            // If it is the route handler for the current request, execute it
             if (middleware === handler) {
               middleware(request, response, () => { });
             } else {
-              // Otherwise, skip to the next middleware
               next();
             }
           } else {
-            // If middleware is a general middleware, execute it
             middleware(request, response, next);
           }
         } else {
