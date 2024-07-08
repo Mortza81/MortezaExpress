@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "Mortreza",
   "license": "ISC",
-  "description": "",
+  "description": "It's a simple express writen by Mortreza",
   "dependencies": {
     "typescript": "^5.5.3"
   },
