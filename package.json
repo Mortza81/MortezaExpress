@@ -1,17 +1,17 @@
 {
   "name": "mortezaexpress",
-  "version": "1.0.7",
+  "version": "1.1.2",
   "description": "It's a simple express writen by Mortreza",
   "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "author": "Moretza",
   "scripts": {
-    "build": "npx tsc"
+    "build": "tsc"
   },
   "files": [
     "lib/**/*"
   ],
   "devDependencies": {
-    "@types/node": "^20.14.10",
     "typescript": "^4.0.0"
   },
   "dependencies": {
