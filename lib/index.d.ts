@@ -1,7 +1,7 @@
 /// <reference types="node" />
 
 import { IncomingMessage, ServerResponse } from 'http';
-declare class Response {
+export declare class Response {
     constructor(private res: ServerResponse) {
     }
     json(data: object) :void
@@ -11,7 +11,7 @@ declare class Response {
     end(chunk:any) :void
     write(chunk:any):void
 }
-declare class Request {
+export declare class Request {
     query: Query
     url: URL
     constructor(private req: IncomingMessage, query: Query, url: URL) {}
