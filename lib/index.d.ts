@@ -16,8 +16,8 @@ export declare class Request {
     url: URL
     constructor(private req: IncomingMessage, query: Query, url: URL) {}
 }  
-type Middleware = (req: Request, res: Response, next: () => void) => void;
-type RequestHandler = (req: Request, res: Response, next: () => void) => void;
+type Middleware = (req: Request, res: Response, next: () => Promise<void>|void) => Promise<void>|void;
+type RequestHandler = (req: Request, res: Response, next: () =>  Promise<void>|void) =>  Promise<void>|void;
 
 export function statics(root: string): Middleware;
 

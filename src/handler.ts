@@ -13,7 +13,7 @@ export default function responseHandler(req: IncomingMessage, res: ServerRespons
   const route = routes.find((route) => route.path === url && route.method === method);
   const handler = route?.handler;
 
-  const next = () => {
+  const next =async () => {
     if (index < middlewares.length) {
       const middleware = middlewares[index];
       index++;
@@ -21,18 +21,24 @@ export default function responseHandler(req: IncomingMessage, res: ServerRespons
       if (routes.some(route => route.handler === middleware)) {
         if (middleware === handler) {
           try {
-            middleware(request, response, () => { });
+           await middleware(request, response, () => { });
           } catch (err) {
-            res.write(err)
+            const error = err as Error;
+            response.json({
+              err:error.message
+          })
           }
         } else {
           next();
         }
       } else {
         try {
-          middleware(request, response, next);
+         await middleware(request, response, next);
         } catch (err) {
-          res.write(err)
+          const error = err as Error;
+          response.json({
+            err:error.message
+        })
         }
       }
     } else {
