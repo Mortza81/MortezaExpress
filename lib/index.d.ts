@@ -12,7 +12,7 @@ export declare class Request {
     query: Query
     url: URL
 }  
-type Middleware = (req: Request, res: Response, next: () => Promise<void>) => Promise<void>|void;
+type Middleware = (req: Request, res: Response, next: () => Promise<void> | void) => Promise<void>|void;
 
 export function statics(root: string): Middleware;
 

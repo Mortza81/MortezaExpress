@@ -1,6 +1,6 @@
 {
   "name": "mortezaexpress",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "It's a simple express writen by Mortreza",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

@@ -21,7 +21,7 @@ export default function responseHandler(req: IncomingMessage, res: ServerRespons
       if (routes.some(route => route.handler === middleware)) {
         if (middleware === handler) {
           try {
-            await middleware(request, response, () => { });
+            await middleware(request, response,()=>{});
           } catch (err) {
             const error = err as Error;
             response.json({
