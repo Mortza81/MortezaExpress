@@ -11,16 +11,16 @@ export class Response {
     this.res.setHeader('Location', path)
     this.res.end()
   }
-  setHeader(name:string,value:string|number|string[]){
-    this.res.setHeader(name,value)
+  setHeader(name: string, value: string | number | string[]) {
+    this.res.setHeader(name, value)
   }
-  writeHead(statusCode:number,headers?:{}){
-    this.res.writeHead(statusCode,headers)
+  writeHead(statusCode: number, headers?: {}) {
+    this.res.writeHead(statusCode, headers)
   }
-  end(chunk:any){
+  end(chunk: any) {
     this.res.end(chunk)
   }
-  write(chunk:any){
+  write(chunk: any) {
     this.res.write(chunk)
   }
 }

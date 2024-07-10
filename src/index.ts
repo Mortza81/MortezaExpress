@@ -40,7 +40,6 @@ const getContentType = (filePath: string): string => {
   }
 };
 class MortezaExpress {
-  private handlers: Middleware[] = []
   private middlewares: Middleware[] = [];
   private routes: Route[] = [];
   constructor() { }

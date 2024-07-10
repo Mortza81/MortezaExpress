@@ -5,8 +5,8 @@ export type URL = string
 export type Middleware = (
     req: Request,
     res: Response,
-    next: () => void,
-) => void
+    next: () => Promise<void> | void,
+) => Promise<void> | void
 export type Route = {
     method: "GET" | "PUT" | "POST" | "DELETE",
     path: string,

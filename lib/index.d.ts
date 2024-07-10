@@ -1,9 +1,6 @@
 /// <reference types="node" />
 
-import { IncomingMessage, ServerResponse } from 'http';
 export declare class Response {
-    constructor(private res: ServerResponse) {
-    }
     json(data: object) :void
     redirect(path: string):void
     setHeader(name:string,value:string|number|string[]):void
@@ -14,29 +11,18 @@ export declare class Response {
 export declare class Request {
     query: Query
     url: URL
-    constructor(private req: IncomingMessage, query: Query, url: URL) {}
 }  
-type Middleware = (req: Request, res: Response, next: () => Promise<void>|void) => Promise<void>|void;
-type RequestHandler = (req: Request, res: Response, next: () =>  Promise<void>|void) =>  Promise<void>|void;
+type Middleware = (req: Request, res: Response, next: () => Promise<void>) => Promise<void>|void;
 
 export function statics(root: string): Middleware;
 
-interface Route {
-    method: string;
-    path: string;
-    handler: RequestHandler;
-}
 
 declare class MortezaExpress {
-    handlers: Middleware[];
-    middlewares: Middleware[];
-    routes: Route[];
-
     use(...middlewares: Middleware[]): void;
-    get(path: string, handler: RequestHandler): void;
-    post(path: string, handler: RequestHandler): void;
-    put(path: string, handler: RequestHandler): void;
-    delete(path: string, handler: RequestHandler): void;
+    get(path: string, handler: Middleware): void;
+    post(path: string, handler:  Middleware): void;
+    put(path: string, handler:  Middleware): void;
+    delete(path: string, handler:  Middleware): void;
     listen(port: number, callback: () => void): void;
 }
 
@@ -45,9 +31,5 @@ declare function run(): MortezaExpress;
 type Query = { [index: string]: string[] }
 type URL = string
 
-type Route = {
-    method: "GET" | "PUT" | "POST" | "DELETE",
-    path: string,
-    handler: Middleware
-}
+
 export = run;
