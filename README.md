@@ -28,7 +28,8 @@ app.listen(8000,()=>{
 # Static Files
 For serving static files you can use:
 ```
-app.use("path")
+const mortezaexpess=require("mortezaexpress")
+app.use(mortezaexpress("public"))
 ```
 # Middlewares
 You can add middlewares using:
