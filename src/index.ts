@@ -1,4 +1,5 @@
 import { Middleware, Route } from "./types";
+import mime from 'mime-types'
 import path from 'path'
 import { readFile } from "fs/promises";
 import { Response } from "./Response";
@@ -10,34 +11,13 @@ export function statics(root: string) {
     const filePath = path.join(root, req.url || "/");
     try {
       const data = await readFile(filePath);
-      res.writeHead(200, { "Content-Type": getContentType(filePath) });
+      res.writeHead(200, { "Content-Type": mime.lookup(filePath) });
       res.end(data);
     }
     catch (err) {
       next();
     }
   };
-};
-const getContentType = (filePath: string): string => {
-  const ext = filePath.split(".").pop();
-  switch (ext) {
-    case "html":
-      return "text/html";
-    case "css":
-      return "text/css";
-    case "js":
-      return "application/javascript";
-    case "json":
-      return "application/json";
-    case "png":
-      return "image/png";
-    case "jpg":
-      return "image/jpeg";
-    case "gif":
-      return "image/gif";
-    default:
-      return "application/octet-stream";
-  }
 };
 class MortezaExpress {
   private middlewares: Middleware[] = [];
